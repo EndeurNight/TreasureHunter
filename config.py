@@ -10,19 +10,15 @@ def write_score(name, score):
     #name : str, score : int
     #name : que A ou B (deux joueurs pour l'instant, à voir pour plus tard)
 
-    config.read('scores.ini')
+    config.read('config.ini')
 
     #si name n'est pas A ou B, on renvoie une erreur
     if name not in ['A', 'B']:
         raise ValueError('Le nom doit être A or B, couillu regarde ton code')
-
-    if name in config:
-        config[name]['score'] = str(score)
-    else:  
-        config[name] = {'score': str(score)}
-    with open('scores.ini', 'w') as configfile:
-        config.write(configfile)
     
+    config[name]['score'] = str(score)
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
     return config
 
 def write_pseudo(name, pseudo):
@@ -37,10 +33,7 @@ def write_pseudo(name, pseudo):
     if name not in ['A', 'B']:
         raise ValueError('Le nom doit être A or B, couillu regarde ton code')
 
-    if name in config:
-        config[name]['pseudo'] = str(pseudo)
-    else:  
-        config[name] = {'pseudo': str(pseudo)}
+    config[name]['pseudo'] = str(pseudo)
     with open('scores.ini', 'w') as configfile:
         config.write(configfile)
     
@@ -51,7 +44,7 @@ def write_gameconfig(type):
     #Elle ne prend que en paramètre que le type de configuration (sinon elle renvoie une erreur)
     #config : int
     #config : 1, 2, 3 ou 4
-    config.read('scores.ini')
+    config.read('config.ini')
 
     if type not in [1, 2, 3, 4]:
         raise ValueError('La configuration doit être 1, 2, 3 ou 4, ya un problème chef')
@@ -68,7 +61,7 @@ def write_gameconfig(type):
     elif type == 3:
         config['gameconfig'] = {'ligne': '20', 'colonne': '20', 'tresor': '20'}
     elif type == 4:
-        print("Configuration personnalisée, on laisse l'expert gérer")
+        print("Configuration personnalisée, on laisse la config gérer")
     with open('scores.ini', 'w') as configfile:
         config.write(configfile)
 
