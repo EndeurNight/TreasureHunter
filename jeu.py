@@ -1,3 +1,3 @@
-#ça sera le jeu !
+#le jeu
 
-print("Le jeu bientôt")
+print("coucou  ")
