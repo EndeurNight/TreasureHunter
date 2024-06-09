@@ -1,29 +1,36 @@
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Toplevel
-from ExpertGui import run_expert
-
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"/Users/leo/Documents/GitHub/TreasureHunter/assets/frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame0")
 
 def relative_to_assets(path: str) -> Path:
     #Redirige le chemin vers le dossier assets (prévient les erreurs de chemin, Windows hihihi)
     return ASSETS_PATH / Path(path)
 
+class MenuGui: 
+    def choicelevel(self, event) :
+        #Cette fonction est appelée quand on clique sur un élément de la Combobox
+        #Elle permet de récupérer la valeur sélectionnée
+        #et de l'afficher dans la console
+            print(self.combobox.get())
 
-def menugui(list):
-    #list : la liste des pseudos et scores des joueurs.
-    #Exemple : list = ['[pseudo1, score1]', '[pseudo2, score2]', '[pseudo3, score3]',...]
+    def __init__(self, list):
+        #list : la liste des pseudos et scores des joueurs.
+        #Exemple : list = ['[pseudo1, score1]', '[pseudo2, score2]', '[pseudo3, score3]',...]
 
-        window = Tk()
-        window.geometry("1004x565")
-        window.title("Treasure Hunter (build 1.0.8)")
-        window.configure(bg = "#FFFFFF")
+        self.window = Tk()
+        self.window.geometry("1004x565")
+        self.window.title("Treasure Hunter (build 1.0.8)")
+        self.window.configure(bg = "#FFFFFF")
+
+        
+
 
 
         #Création du canvas
-        canvas = Canvas(
-            window,
+        self.canvas = Canvas(
+            self.window,
             bg = "#FFFFFF",
             height = 565,
             width = 1004,
@@ -35,17 +42,17 @@ def menugui(list):
         ###############################################################
         #LES IMAGES (crées précédements avec GIMP + Figma)
 
-        canvas.place(x = 0, y = 0)
+        self.canvas.place(x = 0, y = 0)
         image_image_1 = PhotoImage(
             file=relative_to_assets("image_1.png"))
-        image_1 = canvas.create_image(
+        self.image_1 = self.canvas.create_image(
             502.0,
             282.0,
             image=image_image_1
         )
         image_image_2 = PhotoImage(
             file=relative_to_assets("image_2.png"))
-        image_2 = canvas.create_image(
+        self.image_2 = self.canvas.create_image(
             806.0,
             78.0,
             image=image_image_2
@@ -58,14 +65,14 @@ def menugui(list):
         #Lancer la partie
         button_image_1 = PhotoImage(
             file=relative_to_assets("button_1.png"))
-        button_1 = Button(
+        self.button_1 = Button(
             image=button_image_1,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: print("ça va lancer le jeu, bientôt :)"),
+            command=lambda: self.launch(),
             relief="flat"
         )
-        button_1.place(
+        self.button_1.place(
             x=45.0,
             y=428.0,
             width=288.0,
@@ -75,14 +82,14 @@ def menugui(list):
         #Configuration expert
         button_image_2 = PhotoImage(
             file=relative_to_assets("button_2.png"))
-        button_2 = Button(
+        self.button_2 = Button(
             image=button_image_2,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: Toplevel(run_expert()),
+            command=lambda: self.expert(),
             relief="flat"
         )
-        button_2.place(
+        self.button_2.place(
             x=360.0,
             y=431.0,
             width=230.0,
@@ -92,18 +99,18 @@ def menugui(list):
         #LES ENTRÉES (pour les pseudos)
         entry_image_1 = PhotoImage(
             file=relative_to_assets("entry_1.png"))
-        entry_bg_1 = canvas.create_image(
+        entry_bg_1 = self.canvas.create_image(
             396.5,
             167.5,
             image=entry_image_1
         )
-        entry_1 = Entry(
+        self.entry_1 = Entry(
             bd=0,
             bg="#FFFFFF",
             fg="#000716",
             highlightthickness=0
         )
-        entry_1.place(
+        self.entry_1.place(
             x=223.0,
             y=151.0,
             width=347.0,
@@ -112,18 +119,18 @@ def menugui(list):
 
         entry_image_2 = PhotoImage(
             file=relative_to_assets("entry_2.png"))
-        entry_bg_2 = canvas.create_image(
+        entry_bg_2 = self.canvas.create_image(
             396.5,
             231.5,
             image=entry_image_2
         )
-        entry_2 = Entry(
+        self.entry_2 = Entry(
             bd=0,
             bg="#FFFFFF",
             fg="#000716",
             highlightthickness=0
         )
-        entry_2.place(
+        self.entry_2.place(
             x=223.0,
             y=215.0,
             width=347.0,
@@ -132,23 +139,44 @@ def menugui(list):
 
         entry_image_3 = PhotoImage(
             file=relative_to_assets("entry_3.png"))
-        entry_bg_3 = canvas.create_image(
+        entry_bg_3 = self.canvas.create_image(
             438.0,
             307.5,
             image=entry_image_3
         )
-        entry_3 = Entry(
-            bd=0,
-            bg="#FFFFFF",
-            fg="#000716",
-            highlightthickness=0
+
+        
+        self.level_list=["Facile (10x10 - 8 trésors)", "Moyen (20x24 - 10 trésors)", "Difficile (24x36 - 12 trésors)", "Configuration personnalisée"]
+        import tkinter.ttk as ttk
+        self.combobox = ttk.Combobox(
+            self.window,
+            values=self.level_list
         )
-        entry_3.place(
+
+        self.combobox.current(0)
+        self.combobox.place(
             x=306.0,
             y=291.0,
             width=264.0,
             height=31.0
         )
+        self.combobox.config(state="readonly")
+
+        self.combobox.bind("<<ComboboxSelected>>", self.choicelevel)
+
+
+        # self.entry_3 = Entry(
+        #     bd=0,
+        #     bg="#FFFFFF",
+        #     fg="#000716",
+        #     highlightthickness=0
+        # )
+        # self.entry_3.place(
+        #     x=306.0,
+        #     y=291.0,
+        #     width=264.0,
+        #     height=31.0
+        # )
 
         ###############################################################
 
@@ -162,7 +190,7 @@ def menugui(list):
             list = list[:12]
         #si la liste contient au moins un pseudo, on crée son texre
         for i in range(0, len(list)):
-            canvas.create_text(
+            self.canvas.create_text(
                 666.0,
                 143.0 + (29 * i),
                 anchor="nw",
@@ -182,7 +210,7 @@ def menugui(list):
             list = list[:12]
         #si la liste contient au moins un score, on crée le texte correspondant
         for i in range(0, len(list)):
-            canvas.create_text(
+            self.canvas.create_text(
                 895.0,
                 143.0 + (29 * i),
                 anchor="nw",
@@ -192,10 +220,26 @@ def menugui(list):
                 
                 )
 
-        window.resizable(False, False)
-        window.mainloop()
+        self.window.resizable(False, False)
+        self.window.mainloop()
 
-test_list = [['JDHNKAZJNDJKZAO', '100'], ['Lédzadzadzao', '200'], ['PierrdzadzazadzadzabdfjkbzefrkjbezkbfZEBGFKJZEBFKJZABKJFEB', '300'], ['Paul', '400'], ['Jacques', '500'], ['Jean', '600'], ['Marie', '700'], ['Louise', '800'], ['Julie', '900'], ['Julien', '1000'], ['Marie', '1100'], ['Louise', '1200']]
+    def expert(self) :
+        #une alerte tkinter pour dire que c'est en cours
+        self.window.destroy()
+        from ExpertGui import Expertgui
+        Expertgui()
 
-if __name__ == "__main__":
-    menugui(test_list)
+    def launch(self) :
+        print("Saving configuration...")
+        #A FINIR
+        print("Starting game...")
+        #self.window.destroy()
+        from JeuGui import JeuGui
+        JeuGui()
+        #Une alerte tkinter pour dire que c'est en cours
+        
+        #self.window.messagebox.showinfo("En cours de développement, ça arrive :)")
+
+
+
+

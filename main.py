@@ -3,7 +3,8 @@ from configparser import *
 from os import path
 
 def create_score_file():
-    for i in range(1,4) : 
+    #Cette fonction vérifie si les fichiers de score existent, et les crée si ils n'existent pas.
+    for i in range(1,4) : #Fichiers de score 1, 2 et 3 pour facile (1), moyen (2) et difficile (3)
         print(f"Checking for score file {i}...")
         if not path.exists(f'configfiles/score{i}.ini'):
             print("Creating score file...")
@@ -20,10 +21,8 @@ def create_score_file():
         else : 
             print("Config file already exists. Pray that it's not corrupted")
 
-
-
-
 def launch() : 
+    #Ascii art
     print(r"""
     
  _____                                                      _            
@@ -37,13 +36,11 @@ def launch() :
     """)
     print("TreasureHunter V1.6.2" + "\n")
     print("Initializing...")
+
+
     config = ConfigParser()
-
-    # parse existing file
     config.read('configfiles/config.ini')
-
     print("Checking for config file...")
-
     #Section de configuration du jeu
     if not path.exists('configfiles/config.ini'):
         print("Creating config file...")
@@ -68,8 +65,8 @@ def launch() :
     print("Starting GUI...")
     #on lance la fenêtre de démarrage
     from MenuGui import MenuGui
-    MenuGui()
-    print("GUI started")
+    MenuGui([["J1", "0"], ["J2", "0"], ["J3", "0"], ["J4", "0"], ["J5", "0"], ["J6", "0"], ["J7", "0"], ["J8", "0"], ["J9", "0"], ["J10", "0"], ["J11", "0"], ["J12", "0"]])
+    print("GUI started \n \n")
     
 
 if __name__ == "__main__" :
