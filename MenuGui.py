@@ -1,5 +1,6 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
+from config import get_scoreboard
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame0")
@@ -13,11 +14,22 @@ class MenuGui:
         #Cette fonction est appelée quand on clique sur un élément de la Combobox
         #Elle permet de récupérer la valeur sélectionnée
         #et de l'afficher dans la console
-            print(self.combobox.get())
+        print("Changing level to " + self.combobox.get())
+        self.choicedlevel = self.combobox.get()
+        
+        if self.choicedlevel == "Facile (10x10 - 8 trésors)":
+            self.choicedlevel = 1
+        elif self.choicedlevel == "Moyen (20x24 - 10 trésors)":
+            self.choicedlevel = 2
+        elif self.choicedlevel == "Difficile (24x36 - 12 trésors)":
+            self.choicedlevel = 3
+        elif self.choicedlevel == "Configuration personnalisée":
+            self.choicedlevel = 4
+        self.window.destroy()
+        MenuGui(self.choicedlevel)
+        
 
-    def __init__(self, list):
-        #list : la liste des pseudos et scores des joueurs.
-        #Exemple : list = ['[pseudo1, score1]', '[pseudo2, score2]', '[pseudo3, score3]',...]
+    def __init__(self, level):
 
         self.window = Tk()
         self.window.geometry("1004x565")
@@ -26,6 +38,13 @@ class MenuGui:
 
         
 
+        self.parameters = get_scoreboard(level)
+
+        self.list = self.parameters[0]
+        self.level = self.parameters[1]
+
+        print(self.list)
+        print(self.level)
 
 
         #Création du canvas
@@ -162,6 +181,9 @@ class MenuGui:
         )
         self.combobox.config(state="readonly")
 
+        #la combobox est par défaut sur le choix donné
+        self.combobox.set(self.level_list[self.level - 1])
+
         self.combobox.bind("<<ComboboxSelected>>", self.choicelevel)
 
 
@@ -183,18 +205,18 @@ class MenuGui:
         #SCOREBOARD
 
         #si la liste est vide, on renvoie rien
-        if list == []:
+        if self.list == []:
             return None
         #si la liste dépasse 12 scores, on ne prend que les 12 premiers (par je ne sais quel miracle ahh)
-        if len(list) > 12:
+        if len(self.list) > 12:
             list = list[:12]
         #si la liste contient au moins un pseudo, on crée son texre
-        for i in range(0, len(list)):
+        for i in range(0, len(self.list)):
             self.canvas.create_text(
                 666.0,
                 143.0 + (29 * i),
                 anchor="nw",
-                text=list[i][0],
+                text=self.list[i][0],
                 fill="#FFFFFF",
                 font=("PiecesofEight", 20 * -1)
                 
@@ -203,22 +225,22 @@ class MenuGui:
         #même chose pour les scores
 
         #si la liste est vide, on renvoie rien
-        if list == []:
+        if self.list == []:
             return None
         #si la liste dépasse 12 scores, on ne prend que les 12 premiers (au cas où, on ne sait jamais lol)
-        if len(list) > 12:
-            list = list[:12]
+        if len(self.list) > 12:
+            self.list = self.list[:12]
         #si la liste contient au moins un score, on crée le texte correspondant
-        for i in range(0, len(list)):
+        for i in range(0, len(self.list)):
             self.canvas.create_text(
-                895.0,
-                143.0 + (29 * i),
-                anchor="nw",
-                text=list[i][1],
-                fill="#FFFFFF",
-                font=("PiecesofEight", 20 * -1)
-                
-                )
+            895.0,
+            143.0 + (29 * i),
+            anchor="nw",
+            text=self.list[i][1],
+            fill="#FFFFFF",
+            font=("PiecesofEight", 20 * -1)
+            
+            )
 
         self.window.resizable(False, False)
         self.window.mainloop()

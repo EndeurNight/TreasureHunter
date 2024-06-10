@@ -1,6 +1,7 @@
 #importation des modules
 from configparser import *
 from os import path
+from config import *
 
 def create_score_file():
     #Cette fonction vérifie si les fichiers de score existent, et les crée si ils n'existent pas.
@@ -65,7 +66,7 @@ def launch() :
     print("Starting GUI...")
     #on lance la fenêtre de démarrage
     from MenuGui import MenuGui
-    MenuGui([["J1", "0"], ["J2", "0"], ["J3", "0"], ["J4", "0"], ["J5", "0"], ["J6", "0"], ["J7", "0"], ["J8", "0"], ["J9", "0"], ["J10", "0"], ["J11", "0"], ["J12", "0"]])
+    MenuGui(1)
     print("GUI started \n \n")
     
 
