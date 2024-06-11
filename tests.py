@@ -1,9 +1,13 @@
-#lecture fichier de config
-
-from configparser import ConfigParser
+from configparser import *
 
 config = ConfigParser()
-config.read('config.ini')
 
-config["Game"]["J1"] = {"pseudo": "Joueur 1", "score": "0"}
-config["Game"]["J2"] = {"pseudo": "Joueur 2", "score": "0"}
+#fichier : configfiles/config.ini
+
+config.read('configfiles/config.ini')
+config.set("GameConfig", "lignes", "20")
+config.set("GameConfig", "colonnes", "24")
+config.set("GameConfig", "tresors", "20")
+
+with open('configfiles/config.ini', 'w') as configfile:
+    config.write(configfile)

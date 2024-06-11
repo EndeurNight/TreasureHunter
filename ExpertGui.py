@@ -71,7 +71,7 @@ class Expertgui:
             image=self.entry_image_1
         )
 
-        w2 = Scale(self.window, from_=1, to=32, length=400, orient=HORIZONTAL)
+        w2 = Scale(self.window, from_=12, to=24, length=400, orient=HORIZONTAL)
         w2.set(15)
 
         self.entry_1 = self.canvas.create_window(395.0, 226.5, window=w2)
@@ -98,7 +98,7 @@ class Expertgui:
             image=self.entry_image_2
         )
 
-        w3 = Scale(self.window, from_=1, to=32, length=382.0, orient=HORIZONTAL)
+        w3 = Scale(self.window, from_=12, to=36, length=382.0, orient=HORIZONTAL)
         w3.set(15)
 
         self.entry_2 = self.canvas.create_window(404.0, 284.5, window=w3)
@@ -124,7 +124,7 @@ class Expertgui:
             image=self.entry_image_3
         )
 
-        w4 = Scale(self.window, from_=1, to=32, length=314.0, orient=HORIZONTAL)
+        w4 = Scale(self.window, from_=1, to=12, length=314.0, orient=HORIZONTAL)
         w4.set(15)
         self.entry_3 = self.canvas.create_window(438.0, 336.5, window=w4)
 

@@ -1,6 +1,6 @@
 #importation des modules
 from configparser import *
-from os import path
+from os import path, remove
 from config import *
 
 def create_score_file():
@@ -9,6 +9,8 @@ def create_score_file():
         print(f"Checking for score file {i}...")
         if not path.exists(f'configfiles/score{i}.ini'):
             print("Creating score file...")
+            config = ConfigParser()
+            config.read(f'configfiles/score{i}.ini')
             with open(f'configfiles/score{i}.ini', 'w') as configfile:
                 config = ConfigParser()
                 config.add_section("GameConfig")
@@ -16,11 +18,11 @@ def create_score_file():
                 for j in range(1, 13) :
                     config.add_section(f"J{j}")
                     config.set(f"J{j}", "pseudo", "")
-                    config.set(f"J{j}", "score", "0")
+                    config.set(f"J{j}", "score", "")
                 config.write(configfile)
                 print(f"Score file {i} created")
         else : 
-            print("Config file already exists. Pray that it's not corrupted")
+            print("Problème dans les fichiers de score")
 
 def launch() : 
     #Ascii art
@@ -42,7 +44,6 @@ def launch() :
     config = ConfigParser()
     config.read('configfiles/config.ini')
     print("Checking for config file...")
-    #Section de configuration du jeu
     if not path.exists('configfiles/config.ini'):
         print("Creating config file...")
         config.add_section("GameConfig")
@@ -51,16 +52,24 @@ def launch() :
         config.set("GameConfig", "tresors", "10")
         #Section des joueurs
         config.add_section("J1")
-        config.set("J1", "pseudo", "")
+        config.set("J1", "pseudo", "Joueur 1")
         config.set("J1", "score", "0")
         config.add_section("J2")
-        config.set("J2", "pseudo", "")
+        config.set("J2", "pseudo", "Joueur 2")
         config.set("J2", "score", "0")
         with open('configfiles/config.ini', 'w') as configfile:
             config.write(configfile)
         print("Config file created")
     else:
-        print("Config file already exists. Pray that it's not corrupted")
+        print("Config file found (pray for no errors)" + "\n")
+        print("Deleting old scores and parties...")
+        config.read('configfiles/config.ini')
+        config.set("J1", "score", "0")
+        config.set("J2", "score", "0")
+        config.set("J1", "pseudo", "Joueur 1")
+        config.set("J2", "pseudo", "Joueur 2")
+        with open('configfiles/config.ini', 'w') as configfile:
+            config.write(configfile)
     #vérification des scores
     create_score_file()
     print("Starting GUI...")

@@ -1,7 +1,8 @@
+import configparser
+
 #Ce module crée des méthodes pour modifier le fichier de configuration.
 #Le fichier de configuration stocke les pseudos des joueurs, leur score actualisé ainsi que la configuration de la partie.
 
-import configparser
 config = configparser.ConfigParser()
 
 #fichier : configfiles/config.ini
@@ -16,12 +17,17 @@ def write_config_score(name, score):
     if name not in ['J1', 'J2']:
         raise ValueError('Le nom doit être J1 or J2, couillu regarde ton code')
     
+    #on additionne le score actuel avec le nouveau
+
+    old_score = int(config[str(name)]['score'])
+    score = old_score + score
     config.set(str(name), "score", str(score))
+
 
     with open('configfiles/config.ini', 'w') as configfile:
         config.write(configfile)
 
-    print("Score de " + name + " mis à jour : " + str(score))
+    print("[Config] Score de " + str(name )+ " mis à jour : " + str(old_score) + "->> " + str(score)+ "(+ " + str(score-old_score) + ")")
 
 def write_config_pseudo(name, pseudo):
     #Cette fonction prend en paramètre le nom du joueur et son pseudo, et met à jour le fichier de configuration avec ces informations.
@@ -39,7 +45,7 @@ def write_config_pseudo(name, pseudo):
     with open('configfiles/config.ini', 'w') as configfile:
         config.write(configfile)
     
-    print("Pseudo de " + name + " mis à jour : " + pseudo)
+    print("[Config] Pseudo de " + name + " mis à jour : " + pseudo)
     
 def write_config_gameconfig(type):
     #Cette fonction prend en paramètre le type de configuration (1 = facile, 2 = moyen, 3 = difficile, 4 = personnalisé) et met à jour le fichier de configuration avec ces informations.
@@ -56,17 +62,26 @@ def write_config_gameconfig(type):
     #moyen : 20, 24, 10
     #difficile : 24, 36, 12
 
+
+
     if type == 1:
-        config['gameconfig'] = {'ligne': '16', 'colonne': '12', 'tresor': '4'}
-        print("Configuration facile mise à jour")
+        config.set('GameConfig', 'lignes', '10')
+        config.set('GameConfig', 'colonnes', '10')
+        config.set('GameConfig', 'tresors', '8')
+        print("[Config] Configuration facile mise à jour")
     elif type == 2:
-        config['gameconfig'] = {'ligne': '20', 'colonne': '24', 'tresor': '8'}
-        print("Configuration moyenne mise à jour")
+        config.set('GameConfig', 'lignes', '20')
+        config.set('GameConfig', 'colonnes', '24')
+        config.set('GameConfig', 'tresors', '10')
+
+        print("[Config] Configuration moyenne mise à jour")
     elif type == 3:
-        config['gameconfig'] = {'ligne': '24', 'colonne': '36', 'tresor': '12'}
-        print("Configuration difficile mise à jour")
+        config.set('GameConfig', 'lignes', '24')
+        config.set('GameConfig', 'colonnes', '36')
+        config.set('GameConfig', 'tresors', '12')
+        print("[Config] Configuration difficile mise à jour")
     elif type == 4:
-        print("Configuration personnalisée, on laisse la config gérer")
+        print("[Config] Configuration personnalisée, on laisse la config gérer")
     
     with open('configfiles/config.ini', 'w') as configfile:
         config.write(configfile)
@@ -112,9 +127,9 @@ def write_scoreboard(pseudo, score, level):
         config.write(configfile)
 
     if found:
-        print("Scoreboard du niveau " + str(level) + " mis à jour. Nouveau score de " + pseudo + " : " + str(score))
+        print("[Config] Scoreboard du niveau " + str(level) + " mis à jour. Nouveau score TROUVE de " + pseudo + " : " + str(score))
     else:
-        print("Scoreboard du niveau " + str(level) + " mis à jour. Score de " + pseudo + " mis à jour : " + str(score))
+        print("[Config] Scoreboard du niveau " + str(level) + " mis à jour. Score de " + pseudo + " mis à jour : " + str(score))
 
 def get_scoreboard(level) :
     #En paramètre le level, retourn la liste
@@ -123,23 +138,46 @@ def get_scoreboard(level) :
     
     #si le niveau est 4, on renvoie une liste vide (je sais que c'est moche mais on est obligé de passer par ça pour Tkinter après)
     
-    if level == 4 : return [[[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()]], 4]
+    if level == 4 : return [[[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[("Expert mode"),()]], 4]
     
     config.read(f'configfiles/score{level}.ini')
 
     scores = []
     for i in range(1, 13):
-        scores.append((config[f'J{i}']['pseudo'], int(config[f'J{i}']['score'])))
+        scores.append((config[f'J{i}']['pseudo'], config[f'J{i}']['score']))
 
-    #on trie les scores, au cas où
+    #on trie les scores, au cas où c'est pas déjà fait (normalement si mais bon lol)
     scores = sorted(scores, key=lambda x: x[1], reverse=True)
-
+    
     return scores, level
 
+def get_score(name):
 
+    #retourne le score du joueur A ou B
+    #name : str
+    #name : J1 ou J2
+
+    config.read('configfiles/config.ini')
+
+    if name not in ['J1', 'J2']:
+        raise ValueError('Le nom doit être J1 or J2, couillu regarde ton code')
+
+    return int(config[str(name)]['score'])
+
+def get_pseudo(name) :
+    #retourne le pseudo du joueur A ou B
+    #name : str
+    #name : J1 ou J2
+
+    config.read('configfiles/config.ini')
+
+    if name not in ['J1', 'J2']:
+        raise ValueError('Le nom doit être J1 or J2, couillu regarde ton code')
+
+    return config[str(name)]['pseudo']
+
+def get_gameconfig() :
+    #retourne la configuration de la partie (ligne, colonne, trésor, mode)
+    config.read('configfiles/config.ini')
+    return int(config.get('GameConfig', 'lignes')), int(config.get('GameConfig', 'colonnes')), int(config.get('GameConfig', 'tresors')), int(config.get('GameConfig', 'mode'))
 # #on teste
-
-
-write_scoreboard("Simon", 100, 1)
-write_scoreboard("Leo", 200, 1)
-write_scoreboard("Simon", 2, 2)

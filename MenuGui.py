@@ -1,6 +1,6 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
-from config import get_scoreboard
+from config import *
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame0")
@@ -19,12 +19,16 @@ class MenuGui:
         
         if self.choicedlevel == "Facile (10x10 - 8 trésors)":
             self.choicedlevel = 1
+            write_config_gameconfig(1)
         elif self.choicedlevel == "Moyen (20x24 - 10 trésors)":
             self.choicedlevel = 2
+            write_config_gameconfig(2)
         elif self.choicedlevel == "Difficile (24x36 - 12 trésors)":
             self.choicedlevel = 3
+            write_config_gameconfig(3)
         elif self.choicedlevel == "Configuration personnalisée":
             self.choicedlevel = 4
+            write_config_gameconfig(4)
         self.window.destroy()
         MenuGui(self.choicedlevel)
         
@@ -36,15 +40,10 @@ class MenuGui:
         self.window.title("Treasure Hunter (build 1.0.8)")
         self.window.configure(bg = "#FFFFFF")
 
-        
-
         self.parameters = get_scoreboard(level)
 
         self.list = self.parameters[0]
         self.level = self.parameters[1]
-
-        print(self.list)
-        print(self.level)
 
 
         #Création du canvas
@@ -246,18 +245,22 @@ class MenuGui:
         self.window.mainloop()
 
     def expert(self) :
-        #une alerte tkinter pour dire que c'est en cours
         self.window.destroy()
         from ExpertGui import Expertgui
         Expertgui()
 
     def launch(self) :
         print("Saving configuration...")
-        #A FINIR
+        write_config_pseudo("J1", self.entry_1.get())
+        write_config_pseudo("J2", self.entry_2.get())
+
         print("Starting game...")
         #self.window.destroy()
         from JeuGui import JeuGui
-        JeuGui()
+        configuration = get_gameconfig()
+        print(configuration)
+
+        JeuGui(configuration[0], configuration[1], configuration[2], configuration[3])
         #Une alerte tkinter pour dire que c'est en cours
         
         #self.window.messagebox.showinfo("En cours de développement, ça arrive :)")
