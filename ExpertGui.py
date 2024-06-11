@@ -1,5 +1,7 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Scale, HORIZONTAL, messagebox
+from config import *
+        
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -71,10 +73,10 @@ class Expertgui:
             image=self.entry_image_1
         )
 
-        w2 = Scale(self.window, from_=12, to=24, length=400, orient=HORIZONTAL)
-        w2.set(15)
+        self.w2 = Scale(self.window, from_=12, to=24, length=400, orient=HORIZONTAL)
+        self.w2.set(15)
 
-        self.entry_1 = self.canvas.create_window(395.0, 226.5, window=w2)
+        self.entry_1 = self.canvas.create_window(395.0, 226.5, window=self.w2)
 
        
         # self.entry_1 = Entry(
@@ -98,10 +100,10 @@ class Expertgui:
             image=self.entry_image_2
         )
 
-        w3 = Scale(self.window, from_=12, to=36, length=382.0, orient=HORIZONTAL)
-        w3.set(15)
+        self.w3 = Scale(self.window, from_=12, to=36, length=382.0, orient=HORIZONTAL)
+        self.w3.set(15)
 
-        self.entry_2 = self.canvas.create_window(404.0, 284.5, window=w3)
+        self.entry_2 = self.canvas.create_window(404.0, 284.5, window=self.w3)
 
         # self.entry_2 = Entry(
         #     bd=0,
@@ -124,9 +126,9 @@ class Expertgui:
             image=self.entry_image_3
         )
 
-        w4 = Scale(self.window, from_=1, to=12, length=314.0, orient=HORIZONTAL)
-        w4.set(15)
-        self.entry_3 = self.canvas.create_window(438.0, 336.5, window=w4)
+        self.w4 = Scale(self.window, from_=1, to=12, length=314.0, orient=HORIZONTAL)
+        self.w4.set(15)
+        self.entry_3 = self.canvas.create_window(438.0, 336.5, window=self.w4)
 
 
         # self.entry_3 = Entry(
@@ -149,8 +151,15 @@ class Expertgui:
         #Enregistre (get les sliders et les textboxes) et modifie le fichier de configuraiton
         print("Sauvegarde en cours d'implémentation...")
 
+        #On récupère les valeurs des sliders
+        ligne = self.w2.get()
+        colonne = self.w3.get()
+        tresor = self.w4.get()
+
+        #On modifie le fichier de configuration
+        write_config_expert(ligne, colonne, tresor, 4)
+    
         messagebox.showwarning(title = "Attention", message = "Pour utiliser les paramètres personnalisés, merci de garder le selecteur de niveau sur 'Configuration personnalisée'")
-        
 
         #on détruit la fenêtre de config
         self.window.destroy()

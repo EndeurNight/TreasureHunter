@@ -1,13 +1,9 @@
-from configparser import *
+#on remplit les fichiers de score avec des scores bidons
 
-config = ConfigParser()
+from config import *
+from random import randint
 
-#fichier : configfiles/config.ini
-
-config.read('configfiles/config.ini')
-config.set("GameConfig", "lignes", "20")
-config.set("GameConfig", "colonnes", "24")
-config.set("GameConfig", "tresors", "20")
-
-with open('configfiles/config.ini', 'w') as configfile:
-    config.write(configfile)
+for k in range (1,4) :
+    for i in range(0, 12):
+        prenoms = ["Léo", "Simon", "Chloé", "Celia", "Julien", "Camilia", "Léa", "Arthur", "Lucas", "Emma", "Manon", "Lola"]
+        write_scoreboard(prenoms[i], randint(0, 500), k)

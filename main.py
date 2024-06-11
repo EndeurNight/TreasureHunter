@@ -18,11 +18,11 @@ def create_score_file():
                 for j in range(1, 13) :
                     config.add_section(f"J{j}")
                     config.set(f"J{j}", "pseudo", "")
-                    config.set(f"J{j}", "score", "")
+                    config.set(f"J{j}", "score", "0")
                 config.write(configfile)
                 print(f"Score file {i} created")
         else : 
-            print("Problème dans les fichiers de score")
+            print(f'Score file {i} found')
 
 def launch() : 
     #Ascii art
@@ -39,6 +39,7 @@ def launch() :
     """)
     print("TreasureHunter V1.6.2" + "\n")
     print("Initializing...")
+    
 
 
     config = ConfigParser()
@@ -52,10 +53,10 @@ def launch() :
         config.set("GameConfig", "tresors", "10")
         #Section des joueurs
         config.add_section("J1")
-        config.set("J1", "pseudo", "Joueur 1")
+        config.set("J1", "pseudo", "Pseudo 1")
         config.set("J1", "score", "0")
         config.add_section("J2")
-        config.set("J2", "pseudo", "Joueur 2")
+        config.set("J2", "pseudo", "Pseudo 2")
         config.set("J2", "score", "0")
         with open('configfiles/config.ini', 'w') as configfile:
             config.write(configfile)
@@ -66,15 +67,18 @@ def launch() :
         config.read('configfiles/config.ini')
         config.set("J1", "score", "0")
         config.set("J2", "score", "0")
-        config.set("J1", "pseudo", "Joueur 1")
-        config.set("J2", "pseudo", "Joueur 2")
+        #on garde les pseudos, dans le cas où les joueurs veulent recommencer une partuie (mais on rester les scores)
+        # config.set("J1", "pseudo", "Joueur 1")
+        # config.set("J2", "pseudo", "Joueur 2")
         with open('configfiles/config.ini', 'w') as configfile:
             config.write(configfile)
     #vérification des scores
     create_score_file()
-    print("Starting GUI...")
+    print("\n Starting GUI...")
     #on lance la fenêtre de démarrage
     from MenuGui import MenuGui
+    #pour commencer, on fixe le niveau au niveau 1 (l'utilisateur ne vas pas forcément chisir le niveau, et laissera le 1 déja lmis au début)
+    write_config_gameconfig(1)
     MenuGui(1)
     print("GUI started \n \n")
     

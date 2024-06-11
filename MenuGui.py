@@ -1,5 +1,5 @@
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Scale, HORIZONTAL, messagebox
 from config import *
 
 OUTPUT_PATH = Path(__file__).parent
@@ -20,6 +20,7 @@ class MenuGui:
         if self.choicedlevel == "Facile (10x10 - 8 trésors)":
             self.choicedlevel = 1
             write_config_gameconfig(1)
+            #on écrit également les pseudos déjà rentrés, si ils ont étés modifiés
         elif self.choicedlevel == "Moyen (20x24 - 10 trésors)":
             self.choicedlevel = 2
             write_config_gameconfig(2)
@@ -29,9 +30,18 @@ class MenuGui:
         elif self.choicedlevel == "Configuration personnalisée":
             self.choicedlevel = 4
             write_config_gameconfig(4)
+            #une alrrte tkinter
+            messagebox.showwarning(title="Configuration personnalisée", message="Vous avez choisi la configuration personnalisée manuellement. Veuillez modifier les paramètres dans le menu expert (sinon, la dernière configuration sera utilisée)")
+        
         self.window.destroy()
         MenuGui(self.choicedlevel)
         
+    def update_pseudo(self):
+        #Cette fonction permet de mettre à jour les pseudos des joueurs
+        #dans le fichier de configuration
+        write_config_pseudo("J1", self.entry_1.get())
+        write_config_pseudo("J2", self.entry_2.get())
+        print("Pseudos mis à jour")
 
     def __init__(self, level):
 
@@ -39,6 +49,11 @@ class MenuGui:
         self.window.geometry("1004x565")
         self.window.title("Treasure Hunter (build 1.0.8)")
         self.window.configure(bg = "#FFFFFF")
+
+        #logo de la fenêtre
+        self.window.iconbitmap(relative_to_assets("logo.ico"))
+
+        self.window.eval('tk::PlaceWindow . center')
 
         self.parameters = get_scoreboard(level)
 
@@ -122,11 +137,15 @@ class MenuGui:
             167.5,
             image=entry_image_1
         )
+
+        # ps1 = StringVar()
+        # ps1.trace_add("write", lambda *args: self.update_pseudo())
+
         self.entry_1 = Entry(
             bd=0,
             bg="#FFFFFF",
             fg="#000716",
-            highlightthickness=0
+            highlightthickness=0,
         )
         self.entry_1.place(
             x=223.0,
@@ -134,6 +153,8 @@ class MenuGui:
             width=347.0,
             height=31.0
         )
+
+        # self.entry_1.trace_add("write", lambda *args: self.update_pseudo())
 
         entry_image_2 = PhotoImage(
             file=relative_to_assets("entry_2.png"))
@@ -241,6 +262,11 @@ class MenuGui:
             
             )
 
+        ###############################################################
+        #on met les pseudos des joueurs dans les Entry
+        self.entry_1.insert(0, get_pseudo("J1"))
+        self.entry_2.insert(0, get_pseudo("J2"))
+
         self.window.resizable(False, False)
         self.window.mainloop()
 
@@ -258,8 +284,8 @@ class MenuGui:
         #self.window.destroy()
         from JeuGui import JeuGui
         configuration = get_gameconfig()
-        print(configuration)
-
+        #print("Configuration de la partie : " + str(configuration))
+        self.window.destroy()
         JeuGui(configuration[0], configuration[1], configuration[2], configuration[3])
         #Une alerte tkinter pour dire que c'est en cours
         

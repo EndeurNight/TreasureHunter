@@ -27,7 +27,7 @@ def write_config_score(name, score):
     with open('configfiles/config.ini', 'w') as configfile:
         config.write(configfile)
 
-    print("[Config] Score de " + str(name )+ " mis à jour : " + str(old_score) + "->> " + str(score)+ "(+ " + str(score-old_score) + ")")
+    print("[Config] Score de " + str(name )+ " mis à jour : " + str(old_score) + " --> " + str(score)+ " (+" + str(score-old_score) + " points)")
 
 def write_config_pseudo(name, pseudo):
     #Cette fonction prend en paramètre le nom du joueur et son pseudo, et met à jour le fichier de configuration avec ces informations.
@@ -48,6 +48,8 @@ def write_config_pseudo(name, pseudo):
     print("[Config] Pseudo de " + name + " mis à jour : " + pseudo)
     
 def write_config_gameconfig(type):
+
+
     #Cette fonction prend en paramètre le type de configuration (1 = facile, 2 = moyen, 3 = difficile, 4 = personnalisé) et met à jour le fichier de configuration avec ces informations.
     #Elle ne prend que en paramètre que le type de configuration (sinon elle renvoie une erreur)
     #config : int
@@ -65,27 +67,40 @@ def write_config_gameconfig(type):
 
 
     if type == 1:
-        config.set('GameConfig', 'lignes', '10')
-        config.set('GameConfig', 'colonnes', '10')
-        config.set('GameConfig', 'tresors', '8')
+        write_config_expert(10, 10, 8, 1)
         print("[Config] Configuration facile mise à jour")
     elif type == 2:
-        config.set('GameConfig', 'lignes', '20')
-        config.set('GameConfig', 'colonnes', '24')
-        config.set('GameConfig', 'tresors', '10')
-
+        write_config_expert(20, 24, 10, 2)
         print("[Config] Configuration moyenne mise à jour")
     elif type == 3:
-        config.set('GameConfig', 'lignes', '24')
-        config.set('GameConfig', 'colonnes', '36')
-        config.set('GameConfig', 'tresors', '12')
+        write_config_expert(24, 36, 12, 3)
         print("[Config] Configuration difficile mise à jour")
     elif type == 4:
-        print("[Config] Configuration personnalisée, on laisse la config gérer")
+        print("[Config] Configuration personnalisée choisie. ExpertGui fera les modifications")
     
     with open('configfiles/config.ini', 'w') as configfile:
         config.write(configfile)
     
+def write_config_expert(lignes, colonnes, tresors, mode):
+    #Cette fonction prend en paramètre le nombre de lignes, de colonnes et de trésors, et met à jour le fichier de configuration avec ces informations.
+    #Elle ne prend que en paramètre que des entiers (sinon elle renvoie une erreur)
+    #lignes : int, colonnes : int, tresors : int
+    #lignes, colonnes, tresors : entiers
+
+    config.read('configfiles/config.ini')
+
+    if type(lignes) != int or type(colonnes) != int or type(tresors) != int:
+        raise ValueError('Les paramètres doivent être des entiers, soucis camarade')
+
+    config.set('GameConfig', 'lignes', str(lignes))
+    config.set('GameConfig', 'colonnes', str(colonnes))
+    config.set('GameConfig', 'tresors', str(tresors))
+    config.set('GameConfig', 'mode', str(mode))
+
+    with open('configfiles/config.ini', 'w') as configfile:
+        config.write(configfile)
+
+    print("[Config] Modification des paramètres de la partie : " + str(lignes) + " lignes, " + str(colonnes) + " colonnes, " + str(tresors) + " trésors")
 def write_scoreboard(pseudo, score, level):
     #pseudo = str, le pseudo du joueur
     #score = int, le score du J1 ou J2
@@ -99,7 +114,7 @@ def write_scoreboard(pseudo, score, level):
     #création d'une liste de tuples (pseudo, score) à partir du fichier de config
     scores = []
     for i in range(1, 13):
-        scores.append((config[f'J{i}']['pseudo'], int(config[f'J{i}']['score'])))
+        scores.append((config.get(f'J{i}', 'pseudo'), int(config.get(f'J{i}', 'score'))))
 
     #on ajoute le score du joueur
     scores.append((pseudo, score))
@@ -120,7 +135,7 @@ def write_scoreboard(pseudo, score, level):
 
     #on met à jour le fichier de config
     for i in range(0, len(scores)):
-        config[f'J{i+1}']['pseudo'] = scores[i][0]
+        config[f'J{i+1}']['pseudo'] = str(scores[i][0])
         config[f'J{i+1}']['score'] = str(scores[i][1])
 
     with open(f'configfiles/score{level}.ini', 'w') as configfile:
@@ -138,7 +153,7 @@ def get_scoreboard(level) :
     
     #si le niveau est 4, on renvoie une liste vide (je sais que c'est moche mais on est obligé de passer par ça pour Tkinter après)
     
-    if level == 4 : return [[[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[("Expert mode"),()]], 4]
+    if level == 4 : return [[[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[(),()],[("Running in expert mode"),()]], 4]
     
     config.read(f'configfiles/score{level}.ini')
 
@@ -146,7 +161,7 @@ def get_scoreboard(level) :
     for i in range(1, 13):
         scores.append((config[f'J{i}']['pseudo'], config[f'J{i}']['score']))
 
-    #on trie les scores, au cas où c'est pas déjà fait (normalement si mais bon lol)
+    #on trie les scores en gardant que les plus hauts points
     scores = sorted(scores, key=lambda x: x[1], reverse=True)
     
     return scores, level
