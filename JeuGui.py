@@ -105,7 +105,7 @@ def JeuGui(lig, col, tresors, level) :
             #si la case est un trésor, on la colorie en noir + pas de texte
               colors = ('white', 'black')
               #texts = ('T', '')
-              texts = ('TT', '')
+              texts = ('T', '')
             else : 
                 #calcul de la distance entre la case et le trésor (distnance de Maneattan)
                 distance = 100000  # disons que ça va être compliqué de faire plus que ça
