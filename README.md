@@ -3,6 +3,8 @@
 ## About TreasureHunter
 An implementation of the "Treasure Hunter" game in Python. With Tkinter for the configuration interface, and ezTK for the game.
 
+(Note des auteurs : le code est vraiment dégeu et pas clean, on va prochainement le faire tout beau)
+
 
 
 ## Screenshots
