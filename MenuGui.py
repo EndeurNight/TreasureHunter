@@ -50,11 +50,6 @@ class MenuGui:
         self.window.title("Treasure Hunter (build 1.0.8)")
         self.window.configure(bg = "#FFFFFF")
 
-        #logo de la fenêtre
-        self.window.iconbitmap(relative_to_assets("logo.ico"))
-
-        self.window.eval('tk::PlaceWindow . center')
-
         self.parameters = get_scoreboard(level)
 
         self.list = self.parameters[0]
